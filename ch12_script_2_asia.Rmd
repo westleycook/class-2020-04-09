@@ -22,6 +22,18 @@ Today's class will be based on [Chapter 12: "Multiple Regression"](https://david
 
 **Prompt:** Recall the model we made in Scene 4: : `earnings` as a function of `sat` and `faculty`. Use that model to make a prediction. Consider a school with average faculty salary of $50,000 and average SAT of 1200. What would the school's median earnings be 10 years from now? Although there are fancier ways of doing this in R --- check out the `predict()` function --- you should use the simple approach of using the regression estimates and then plugging in the appropriate values.
 
+```{r answer_key, include = FALSE}
+
+model_1 <- lm(earnings ~ sat + faculty, data = x)
+
+
+- 2591 +   (24 * 1200) + (0.39 * 50000)   
+
+
+predict(model_1, newdata = tibble(faculty = 50000, sat = 1200))
+
+```
+
 
 ### Scene 8
 
