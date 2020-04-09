@@ -27,7 +27,7 @@ First, re-estimate that model. Call it `model_1`.
 
 Second, look at the regression coefficients.
 
-Third, consider a school with average faculty salary of $50,000 and average SAT of 1200. What would the school's median earnings be 10 years from now? Use the simple approach of taking the regression estimates and then plugging in 5000 and 1200 into the formula which the regression model represents.
+Third, consider a school with average faculty salary of $50,000 and average SAT of 1200. What would the school's median earnings be 10 years from now? Use the simple approach of taking the regression estimates and then plugging in 50 and 1200 into the formula which the regression model represents.
 
 Fourth (and optional! not covered in the book!), check out the `predict()` function. This allows you to avoid typing out the formula yourself.
 
