@@ -1,0 +1,97 @@
+---
+title: 'Chapter 12: Multivariate Regression'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(infer)
+library(skimr)
+library(broom)
+library(gganimate)
+library(tidyverse)
+
+x <- read_rds("college.rds")
+```
+
+Today's class will be based on [Chapter 12: "Multiple Regression"](https://davidkane9.github.io/PPBDS/12-multiple-regression.html). Have you read it? We will be using data on college characteristics from the IPEDS Database and the Scorecard created by the Department of Education, gathered via the [Opportunity Insights](https://opportunityinsights.org/) project.  The codebook with explanations for each variable is [here](https://opportunityinsights.org/wp-content/uploads/2018/04/Codebook-MRC-Table-10.pdf). We will be trying to figure out what characteristics of a college are associated with the 2011 median income of students, `earnings`, 10 years after they graduate. The other data --- `faculty`, the average faculty salary; `sat`, the average SAT score; `tier`, the type of college; `public`, the private/public status; and `price`, tuition --- is reported as of 2001.
+
+**All dollar values are now measured in thousdands.**
+
+
+### Scene 7
+
+**Prompt:** Recall the model we made in Scene 4: `earnings` as a function of `sat` and `faculty`. 
+
+First, re-estimate that model. Call it `model_1`.
+
+Second, look at the regression coefficients.
+
+Third, consider a school with average faculty salary of $50,000 and average SAT of 1200. What would the school's median earnings be 10 years from now? Use the simple approach of taking the regression estimates and then plugging in 5000 and 1200 into the formula which the regression model represents.
+
+Fourth (and optional! not covered in the book!), check out the `predict()` function. This allows you to avoid typing out the formula yourself.
+
+
+
+### Scene 8
+
+**Prompt:** We have our regression model, still called `model_1`, which uses two numerical explanatory variables.
+
+First, use the `augment()` function to calculate the fitted values and residuals. You might want to look at some of the arguments that the `augment()` function allows for.
+
+Second, define what the residual is. 
+
+Third, determine the school with the largest positive residual and the school with the largest negative residual.
+
+Fourth, speculate about what causes these residuals. What is the model missing? How might we improve the model?
+
+
+### Scene 9
+
+**Prompt:** Now that we have explored the relationships between two numerical explanatory variables and the outcome variable, let's look at a model that involves using one categorical variable `public` and one numerical explanatory variable `price` to explain the median earnings variable. `public` is 0 if the school is private and 1 if it is not. `price` is tuition in thousands of dollars.
+
+First, estimate a new model in which `earnings` are explained by `public` and by `price`. There is no interaction term. Interpret the regression coefficients.
+
+Second, estimate another model, `model_2`, in which `earnings` are explained by `public`, `price` and the **interaction** between `public` and `price`. Interpret the regression coefficients.
+
+Third, use `tidy()` to find the confidence intervals for the regression coefficients for `model_2`.
+
+Fourth, interpret the confidence interval for coefficient on `public` using one sentence for the Bayesian interpretation and one sentence for the Frequentist interpretation.
+
+
+
+### Scene 10
+
+**Prompt:** In the previous scene, we generated the confidence intervals using `tidy(conf.int = TRUE)`. Let's check those confidence intervals by doing our own bootstrapping. Set `reps = 100` to save processing time. Hints: `unnest()`, `group_by()`, and `summarize()` are useful here, especially `unnest()` which you may not have seen before.
+
+In other words, you are not using `tidy(conf.int = TRUE)`. You are just using `tidy()`. That gives you the tibble of the regression estimates. Then, you can use `unnest()` to "explode" out a row for each estimate. Then, `group_by(term)` and the usual quantile trick for each parameter should give you what you want.
+
+
+### Scene 11
+
+**Prompt:** Now that we have our regression model using one numerical and one categorical explanatory variables, let's visualize the interaction model using `ggplot2`. Set the colors to represent public vs. private xs. Hint: Be sure to make the `public` variable into a factor first. 
+
+### Scene 12
+
+**Prompt:** Now let's use the regression model results to make predictions. What would be the predicted value of median earnings for a private university with a sticker price of $20,000? Plot this as an intersection of a vertical line and the relevant line of best fit on the graph of the interaction model you made in the previous scene.
+
+
+### Scene 13
+
+**Prompt:** Now let's go back to the two numerical explanatory variables that we explored earlier, `faculty` and `sat`, to understand variation in `earnings`. How well do these two variables explain the median earnings of students for each `tier` of x? The `tier` describes different combinations of college selectivity and type of college. We can model this using `map_*` functions and list columns. Use `map` to create models for each tier. 
+
+
+
+### Scene 14
+
+**Prompt:** To best visualize the variation in the explanatory power of these two variables for the median student earnings for different tiers of colleges, let's plot them using error bars to show the confidence intervals for each tier of x. For which tiers of schools are these two explanatory variables best suited for predicting student earnings? Hint: Make sure that you specify the `tier` variable as a factor variable to make the x-axis tick marks more legible. 
+
+
+
+### Challenge Problem: Scene 15
+
+**Prompt:** Make a `gganimate` plot that shows how a `loess` curve is fitted to a scatterplot of `sat` scores and `earnings`. Replicate this animation (or make it even better!): https://rpubs.com/amytan/satscoresandearnings
+
+
+
+
