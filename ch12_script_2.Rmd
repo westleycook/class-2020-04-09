@@ -16,7 +16,7 @@ x <- read_rds("college.rds")
 
 Today's class will be based on [Chapter 12: "Multiple Regression"](https://davidkane9.github.io/PPBDS/12-multiple-regression.html). Have you read it? We will be using data on college characteristics from the IPEDS Database and the Scorecard created by the Department of Education, gathered via the [Opportunity Insights](https://opportunityinsights.org/) project.  The codebook with explanations for each variable is [here](https://opportunityinsights.org/wp-content/uploads/2018/04/Codebook-MRC-Table-10.pdf). We will be trying to figure out what characteristics of a college are associated with the 2011 median income of students, `earnings`, 10 years after they graduate. The other data --- `faculty`, the average faculty salary; `sat`, the average SAT score; `tier`, the type of college; `public`, the private/public status; and `price`, tuition --- is reported as of 2001.
 
-**All dollar values are now measured in thousdands.**
+**All dollar values are now measured in thousands.**
 
 
 ### Scene 7
@@ -24,6 +24,20 @@ Today's class will be based on [Chapter 12: "Multiple Regression"](https://david
 **Prompt:** Recall the model we made in Scene 4: `earnings` as a function of `sat` and `faculty`. 
 
 First, re-estimate that model. Call it `model_1`.
+
+```{r scene-7a}
+
+model_1 <- x %>% 
+  lm(earnings ~ sat + faculty, data = .)
+
+model_1
+
+# predict: earnings = -2.591 + .024 * 1200 + .385 * 50 = 45.459 thousand
+
+predict(model_1, newdata = tibble(faculty = 50, sat = 1200))
+
+```
+
 
 Second, look at the regression coefficients.
 
@@ -45,6 +59,43 @@ Third, determine the school with the largest positive residual and the school wi
 
 Fourth, speculate about what causes these residuals. What is the model missing? How might we improve the model?
 
+```{r scene-8}
+
+model_1 %>% 
+  augment()
+
+# residual: actual - expected
+
+model_1 %>% 
+  augment() %>% 
+  arrange(desc(.resid))
+
+# school: MCPHS
+# residual: ~67
+
+model_1 %>% 
+  augment() %>% 
+  arrange(.resid)
+
+x %>% 
+  filter(earnings == 38.4,
+         sat == 1362)
+
+# school: Oberlin
+# residual: -19.9
+
+
+# what is the model missing: industries students go into (oberlin = music & liberal arts, MCPHS = pharmacy)
+
+# skip the above and do it more simply using this code
+
+augment(model_1, data = x) %>% 
+  select(name, earnings, sat, faculty, .fitted, .resid) %>% 
+  arrange(desc(.resid))
+
+```
+
+
 
 ### Scene 9
 
@@ -57,6 +108,37 @@ Second, estimate another model, `model_2`, in which `earnings` are explained by 
 Third, use `tidy()` to find the confidence intervals for the regression coefficients for `model_2`.
 
 Fourth, interpret the confidence interval for coefficient on `public` using one sentence for the Bayesian interpretation and one sentence for the Frequentist interpretation.
+
+```{r scene-9}
+
+x %>% 
+  lm(earnings ~ public + price, data = .) %>% 
+  tidy()
+
+# intercept: 23.41 - when public is 0 and price is 0
+# public: 14.91 - when public is 1 and price is 0, add 14.91 to 23.41
+# price: 1.39 - for every 1,000 extra in tuition, graduates make 1,400 extra
+
+model_2 <- lm(earnings ~ public * price, data = x)
+
+model_2 %>% 
+  tidy() %>% 
+  select(term, estimate)
+
+# (Intercept)	 23.9801976	
+# public	     11.1467247	
+# price	        1.3594925	
+# public:price	0.9797763
+
+# intercept: when public = 0 and price = 0?
+# public: offset when public = 1 and price = 0?
+# price: effect of raising price by 1 unit for private school
+# public:price = offset of effect of raising price by 1 unit for public school
+
+
+
+```
+
 
 
 
