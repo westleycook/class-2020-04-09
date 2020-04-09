@@ -1,0 +1,68 @@
+---
+title: 'Chapter 12: Multivariate Regression'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(infer)
+library(skimr)
+library(broom)
+library(gganimate)
+library(tidyverse)
+
+x <- read_rds("college.rds")
+```
+
+Today's class will be based on [Chapter 12: "Multiple Regression"](https://davidkane9.github.io/PPBDS/12-multiple-regression.html). Have you read it? We will be using data on college characteristics from the IPEDS Database and the Scorecard created by the Department of Education, gathered via the [Opportunity Insights](https://opportunityinsights.org/) project.  The codebook with explanations for each variable is [here](https://opportunityinsights.org/wp-content/uploads/2018/04/Codebook-MRC-Table-10.pdf). We will be trying to figure out what characteristics of a college are associated with the 2011 median income of students, `earnings`, 10 years after they graduate. The other data --- `faculty`, the average faculty salary; `sat`, the average SAT score; `tier`, the type of college; `public`, the private/public status; and `price`, tuition --- is reported as of 2001.
+
+
+
+### Scene 7
+
+**Prompt:** Recall the model we made in Scene 4: : `earnings` as a function of `sat` and `faculty`. Use that model to make a prediction. Consider a school with average faculty salary of $50,000 and average SAT of 1200. What would the school's median earnings be 10 years from now? Although there are fancier ways of doing this in R --- check out the `predict()` function --- you should use the simple approach of using the regression estimates and then plugging in the appropriate values.
+
+
+### Scene 8
+
+**Prompt:** Now that we have our regression model using two numerical explanatory variables, let's find the fitted values and residuals for the model using `augment()`. What do the fitted values and residuals mean, in terms of where they appear in a fitted line graph? Take a look at the biggest residuals, both positive and negative. What causes them? What is the model missing? How might we improve the model?
+
+
+### Scene 9
+
+**Prompt:** Now that we have explored the relationships between two numerical explanatory variables and the outcome variable, let's look at a model that involves using one categorical variable `public` and one numerical explanatory variable `price` to explain the median earnings variable. We will explore a specific type of multiple regression model called an **interaction model** in this scene. `public` is 0 if the school is private and 1 if it is not.
+
+First, fit the interaction regression model using the `lm()`. Then, retrieve the regression estimates, including the upper and lower bounds for the confidence intervals. Interpret the meaning of each of the estimates.
+
+
+### Scene 10
+
+**Prompt:** In the previous scene, we generated the confidence intervals using `tidy(conf.int = TRUE)` (if you haven't, go back and do so now). Let's check those confidence intervals by doing our own bootstrapping. Set `reps = 100` to save processing time. Hints: `unnest()`, `group_by()`, and `summarize()` are useful here.
+
+How do the confidence intervals from bootstrapping compare to the ones we found in the previous scene? Provide a one sentence Bayesian interpretation and a one sentence Frequentist interpretation.
+
+
+### Scene 11
+
+**Prompt:** Now that we have our regression model using one numerical and one categorical explanatory variables, let's visualize the interaction model using `ggplot2`. Set the colors to represent public vs. private xs. Hint: Be sure to make the `public` variable into a factor first. 
+
+
+### Scene 12
+
+**Prompt:** Now let's use the regression model results to make predictions. What would be the predicted value of median earnings for a private university with a sticker price of $20,000? Plot this as an intersection of a vertical line and the relevant line of best fit on the graph of the interaction model you made in the previous scene.
+
+
+
+
+### Scene 13
+
+**Prompt:** Now let's go back to the two numerical explanatory variables that we explored earlier, `faculty` and `sat`, to understand variation in `earnings`. How well do these two variables explain the median earnings of students for each `tier` of x? The `tier` describes different combinations of college selectivity and type of college. We can model this using `map_*` functions and list columns. First, filter out all NA values for each explanatory variable. Then, use `map` to create models for each tier. 
+
+
+
+### Scene 14
+
+**Prompt:** To best visualize the variation in the explanatory power of these two variables for the median student earnings for different tiers of xs, let's plot them using error bars to show the confidence intervals for each tier of x. For which tiers of schools are these two explanatory variables best suited for predicting student earnings? Hint: Make sure that you specify the `tier` variable as a factor variable to make the x-axis tick marks more legible. 
+
+
+
